@@ -1,0 +1,113 @@
+CREATE TABLE XeKhach(
+    MAXE varchar(5) PRIMARY KEY,
+    TENXE NVARCHAR(50) NOT NULL,
+    SOKHACHTOIDA int NOT NULL,
+    HANGSX NCHAR(10) NOT NULL,
+)
+
+CREATE TABLE TAIXE(
+    MATX varchar(5) PRIMARY KEY,
+    TENTX NVARCHAR(50) NOT NULL,
+    LUONGTX int NOT NULL,
+    NGAYSINH date NOT NULL,
+    DIACHI NVARCHAR(50) NOT NULL,
+)
+
+CREATE TABLE CHUYENXE(
+    MACHUYEN varchar(5) PRIMARY KEY,
+    NOIDI NVARCHAR(50) NOT NULL,
+    NOIDEN NVARCHAR(50) NOT NULL,
+    GIODI time(7) NOT NULL,
+    GIODEN time(7) NOT NULL,
+    TIENVE int,
+    TIENPHI int,
+)
+
+CREATE TABLE PHANCONG(
+    MATX varchar(5) NOT NULL,
+    MAXE varchar(5) NOT NULL,
+    MACHUYEN varchar(5) NOT NULL,
+    NGAY date NOT NULL,
+    SOKHACH int NOT NULL,
+    PRIMARY KEY(MATX, MAXE, MACHUYEN),
+)
+
+INSERT INTO TAIXE VALUES
+('TX001', N'Hoàng Văn Nam', 20000, '1977-01-10', N'Hà Nội'),
+('TX002', N'Trần Nam Long', 30000, '1973-12-10', N'Hà Giang'),
+('TX003', N'Nguyễn Hoà Bình', 25000, '1978-10-10', N'Bắc Ninh'),
+('TX004', N'Võ Hoài Nam', 20000, '1975-05-20', N'Hoà Bình'),
+('TX005', N'Đinh Văn Hoàn', 35000, '1964-03-15', N'Hà Nam')
+
+INSERT INTO XeKhach VALUES
+('MX024', N'Toyota Vios', 24, N'Toyota'),
+('MX035', N'Toyota Cross', 35, N'Toyota'),
+('MX045', N'Toyota Raize', 45, N'Toyota'),
+('MX124', N'Huyndai Accent', 24, N'Huyndai'),
+('MX135', N'Huyndai Stargazer', 35, N'Huyndai'),
+('MX145', N'Huyndai Santafe', 45, N'Huyndai')
+
+INSERT INTO CHUYENXE VALUES
+('MC001', N'Hà Nội', N'Hà Giang', '07:00:00', '12:00:00', 200000, 100000),
+('MC002', N'Hà Giang', N'Hà Nội', '13:00:00', '18:00:00', 200000, 100000),
+('MC003', N'Hà Nội', N'Bắc Ninh', '07:00:00', '08:00:00', 100000, 50000),
+('MC004', N'Bắc Ninh', N'Hà Nội', '09:00:00', '10:00:00', 100000, 50000),
+('MC005', N'Hà Nội', N'Hoà Bình', '07:00:00', '09:00:00', 150000, 75000),
+('MC006', N'Hoà Bình', N'Hà Nội', '10:00:00', '12:00:00', 150000, 75000),
+('MC007', N'Hà Nội', N'Hà Nam', '07:00:00', '08:00:00', 100000, 50000),
+('MC008', N'Hà Nam', N'Hà Nội', '09:00:00', '10:00:00', 100000, 50000)
+
+INSERT INTO PHANCONG VALUES
+('TX001', 'MX024', 'MC001', '2023-01-01', 24),
+('TX001', 'MX135', 'MC002', '2023-02-01', 34),
+('TX002', 'MX024', 'MC001', '2023-01-02', 20),
+('TX002', 'MX045', 'MC004', '2023-01-05', 43),
+('TX002', 'MX145', 'MC005', '2023-02-01', 45),
+('TX003', 'MX035', 'MC002', '2023-01-03', 34),
+('TX003', 'MX135', 'MC004', '2023-01-06', 35),
+('TX003', 'MX145', 'MC003', '2023-02-15', 43),
+('TX004', 'MX045', 'MC003', '2023-01-04', 45),
+('TX004', 'MX145', 'MC005', '2023-01-07', 43)
+
+--2--
+--2.1--
+ALTER TABLE CHUYENXE
+ADD CONSTRAINT CK_NOIDI 
+CHECK(NOIDI IN (N'Hà Nội', N'Nghệ An', N'Hà Tĩnh', N'Quảng Bình', N'Hải Phòng', N'Hà Giang')
+AND NOIDEN IN (N'Hà Nội', N'Nghệ An', N'Hà Tĩnh', N'Quảng Bình', N'Hải Phòng', N'Hà Giang'))
+GO
+--2.2--
+ALTER TABLE CHUYENXE
+ADD CONSTRAINT CK_TIENVE
+CHECK(TIENVE BETWEEN 1500 AND 7500)
+GO
+--2.3--
+ALTER TABLE TAIXE
+ADD CONSTRAINT CK_TUOI
+CHECK(YEAR(GETDATE()) - YEAR(NGAYSINH) >= 30)
+GO
+
+--4--
+--4.1--
+SELECT tx.MATX, tx.TENTX, cx.NOIDI, cx.NOIDEN, pc.NGAY
+FROM TAIXE tx, PHANCONG pc, CHUYENXE cx
+WHERE tx.MATX = pc.MATX AND pc.MACHUYEN = cx.MACHUYEN
+AND (cx.NOIDEN = N'Nghệ An' OR cx.NOIDEN = N'Quảng Bình')
+
+--4.2--
+SELECT xk.MAXE, xk.TENXE, SUM(cx.TIENVE) AS TONGTIEN, SUM(cx.TIENPHI) AS TONGPHI
+FROM XeKhach xk, PHANCONG pc, CHUYENXE cx
+WHERE xk.MAXE = pc.MAXE AND pc.MACHUYEN = cx.MACHUYEN
+AND YEAR(pc.NGAY) = 2023 
+GROUP BY xk.MAXE, xk.TENXE
+HAVING COUNT(pc.MACHUYEN) >= 2
+
+--4.3--
+SELECT *
+FROM TAIXE
+WHERE MATX NOT IN (
+    SELECT MATX 
+    FROM PHANCONG
+    WHERE YEAR(NGAY) = 2023 AND MONTH(NGAY) = 2
+    )
+

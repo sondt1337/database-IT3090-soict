@@ -1,0 +1,82 @@
+CREATE TABLE KHACHHANG(
+    MAKH VARCHAR(10) PRIMARY KEY,
+    HOTEN NVARCHAR(50) NOT NULL,
+    DIACHI NVARCHAR(50) NOT NULL,
+    SODT VARCHAR(20) NOT NULL,
+    NGAYSINH DATE NOT NULL,
+)
+
+CREATE TABLE SANPHAM(
+    MASP VARCHAR(30) PRIMARY KEY,
+    TENSP NVARCHAR(50) NOT NULL,
+    DVT NVARCHAR(20) NOT NULL,
+    NUOCSX NVARCHAR(50) NOT NULL,
+    DONGIA INT NOT NULL,
+)
+
+CREATE TABLE HOADON(
+    SOHD VARCHAR(10) PRIMARY KEY,
+    NGAYHD DATE NOT NULL,
+    MAKH VARCHAR(10) NOT NULL,
+    FOREIGN KEY (MAKH) REFERENCES KHACHHANG(MAKH)
+)
+
+CREATE TABLE CTHOADON(
+    SOHD VARCHAR(10) NOT NULL,
+    MASP VARCHAR(30) NOT NULL,
+    SL INT NOT NULL,
+    PRIMARY KEY (SOHD, MASP),
+    FOREIGN KEY (SOHD) REFERENCES HOADON(SOHD),
+    FOREIGN KEY (MASP) REFERENCES SANPHAM(MASP)
+)
+
+INSERT INTO KHACHHANG VALUES
+('HDG.001', N'Đào Duy Thịnh', N'Võ Nguyên Giáp', '0915962468', '1984-11-13'),
+('HDG.002', N'Phạm Thanh Bình', N'Trần Nguyên Hãn', '0944639886', '1986-01-27'),
+('HDG.003', N'Nguyễn Thành Duy', N'Nguyễn Thái Học', '0913277115', '1991-03-31'),
+('HDG.004', N'Bùi Trọng Trung', N'Nguyễn Công Trứ', '0946647737', '1987-11-21'),
+('HDG.005', N'Nguyễn Đức Dũng', N'Hồ Xuân Hương', '0916916995', '1989-05-09'),
+('HNI.001', N'Nguyễn Thu Hà', N'Định Công', '01696966456', '1980-10-15'),
+('HNI.002', N'Nguyễn Duy Chung', N'Mỹ Đình', '0914361566', '1981-11-27'),
+('HNI.003', N'Nguyễn Thị Phương Thu', N'Láng Hạ', '0915111115', '1981-11-27'),
+('HNI.004', N'Đinh Thế Dũng', N'Gia Lâm', '02439939399', '1991-04-04'),
+('HNI.005', N'Ngô Tuấn Dũng', N'Hồ Hoàn Kiếm', '0916508272', '1981-09-25')
+
+INSERT INTO SanPham
+VALUES
+    ('RUS.BINHNUOC', N'Bình nước', N'Chiếc', N'NGA', 80000),
+    ('RUS.BINHHOA', N'Bình hoa', N'Chiếc', N'NGA', 150000),
+    ('USA.MOCKHOA', N'Móc khóa', N'Chiếc', N'MỸ', 75000),
+    ('USA.REMOTE', N'Điều khiển từ xa', N'Chiếc', N'MỸ', 125000),
+    ('VNM.MOCTREO', N'Móc treo', N'Chiếc', N'VIỆT NAM', 15000),
+    ('VNM.KHOACUA', N'Khóa cửa', N'Chiếc', N'VIỆT NAM', 75000),
+    ('CAM.KHANRAN', N'Khăn rằn', N'Chiếc', N'CAMPUCHIA', 65000),
+    ('MAS.MUBAOHIEM', N'Mũ bảo hiểm', N'Chiếc', N'MALAYSIA', 180000),
+    ('MAS.AOBAOHIEM', N'Áo bảo hiểm', N'Chiếc', N'MALAYSIA', 350000),
+    ('MAS.GIAUBAOHIEM', N'Giày bảo hiểm', N'Chiếc', N'MALAYSIA', 300000);
+
+INSERT INTO HoaDon
+VALUES
+    ('81357', '2017-05-18', 'HDG.001'),
+    ('81359', '2017-05-19', 'HNL.002'),
+    ('81361', '2017-05-21', 'HDG.001'),
+    ('81363', '2017-05-26', 'HDG.004'),
+    ('81365', '2017-06-18', 'HDG.005'),
+    ('81366', '2017-06-19', 'HNL.001'),
+    ('81369', '2017-06-21', 'HNL.002'),
+    ('81371', '2017-06-29', 'HDG.003'),
+    ('81373', '2017-07-18', 'HNL.004'),
+    ('81375', '2017-07-19', 'HNL.005');
+
+INSERT INTO CTHoaDon
+VALUES
+    ('81357', 'RUS.BINHNUOC', 5),
+    ('81359', 'RUS.BINHHOA', 1),
+    ('81361', 'USA.MOCKHOA', 2),
+    ('81363', 'USA.REMOTE', 3),
+    ('81365', 'VNM.MOCTREO', 4),
+    ('81366', 'VNM.KHOACUA', 1),
+    ('81369', 'CAM.KHANRAN', 5),
+    ('81371', 'MAS.MUBAOHIEM', 1),
+    ('81373', 'MAS.AOBAOHIEM', 2),
+    ('81375', 'MAS.GIAUBAOHIEM', 1);
